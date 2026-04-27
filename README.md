@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VaultFlow
 
-## Getting Started
+A simulated digital asset custody operations console — the kind of internal tool a custodian, exchange, or treasury team would use to manage wallets, route withdrawal requests through a risk engine, approve transactions, and reconcile balances.
 
-First, run the development server:
+**This is not a trading app or portfolio tracker.** It's an operations product focused on the workflow between operators, approvers, and auditors handling institutional crypto custody.
+
+## What it demonstrates
+
+- **Wallet tiering & state** — hot, warm, cold tiers; active / frozen / under-review states; reserve thresholds
+- **Withdrawal workflow** — operator submits → 8-rule risk engine evaluates → approver acts (approve / reject / escalate) → request executes
+- **Risk engine** — pure-function rules with severity tiers (block / warn / info), unit-tested
+- **Reconciliation** — internal balances vs simulated on-chain balances, mismatch detection raises alerts
+- **Audit trail** — append-only event log of every state change, filterable and searchable
+- **Alert lifecycle** — open → acknowledged → resolved, with notes
+- **Role-based access** — operator, approver, auditor; UI adapts per role
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS, shadcn/ui |
+| State | Zustand (in-memory, no backend) |
+| Tests | Vitest |
+| Font | Inter |
+
+## Screens
+
+| Route | Purpose |
+|---|---|
+| `/` | Dashboard — stat cards, activity feed, open alerts, wallet tier breakdown |
+| `/wallets` | Wallet table with tier/status filters, freeze/unfreeze (approver) |
+| `/requests/new` | Withdrawal form → animated risk checks → results |
+| `/approval-queue` | Master-detail review of pending + escalated requests |
+| `/reconciliation` | Run-all, deltas, mismatch alerts, run history |
+| `/audit-log` | Filterable, paginated event log with expandable details |
+| `/alerts` | Severity-sorted list with acknowledge/resolve workflow |
+
+## Roles
+
+Switch roles in the sidebar to see the UI adapt:
+
+- **Operator** — submits withdrawal requests
+- **Approver** — approves / rejects / escalates; freezes wallets; resolves alerts
+- **Auditor** — read-only across all screens
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # localhost:3000
+npm run build        # production build
+npm run lint         # ESLint
+npx vitest           # unit tests (risk engine)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Architecture notes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- All state is in-memory Zustand stores; refresh resets to seed data
+- No backend, no database, no real auth, no real blockchain connectivity
+- Risk rules are pure functions in `src/lib/riskRules.ts` — fully tested
+- Types live in `src/types/index.ts` — single source of truth
+- Mock data in `src/data/seed.ts` is constructed to feel realistic (a frozen wallet, an escalated request, an active reconciliation mismatch)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+src/
+  app/                   # Next.js routes (the 7 screens)
+  components/
+    layout/              # Sidebar
+    ui/                  # shadcn primitives
+  data/seed.ts           # All mock data
+  lib/
+    riskRules.ts         # Risk engine (tested)
+    constants.ts
+  stores/                # Zustand stores
+  types/index.ts
+```
 
-To learn more about Next.js, take a look at the following resources:
+## What's intentionally not built
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This is a portfolio piece, not a real custody system. There is no real authentication, no API layer, no persistence, no on-chain integration, no key management, no MPC, no HSM. The point is the workflow design and the operations UX, not the cryptography.

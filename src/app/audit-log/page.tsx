@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import {
   ArrowUpRight, Shield, CheckCircle2, XCircle,
-  Lock, RefreshCw, AlertTriangle, Bell, Info,
+  Lock, RefreshCw, AlertTriangle, Bell,
   Search, type LucideIcon,
 } from "lucide-react"
 import { useAuditStore } from "@/stores/useAuditStore"

@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from "zustand"
-import type { AuditEvent, AuditAction, UserRole } from "@/types"
+import type { AuditEvent } from "@/types"
 import { SEED_AUDIT_EVENTS } from "@/data/seed"
 import { nanoid } from "@/lib/nanoid"
 

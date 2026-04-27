@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import {
-  CheckCircle2, XCircle, AlertTriangle, Clock,
-  Info, Ban, ArrowUpRight, Lock, MessageSquare,
+  CheckCircle2, AlertTriangle,
+  Info, Ban, Lock, MessageSquare,
 } from "lucide-react"
 import { useRequestStore } from "@/stores/useRequestStore"
 import { useWalletStore } from "@/stores/useWalletStore"
@@ -24,11 +24,6 @@ function formatBalance(n: number, asset: AssetSymbol) {
   if (asset === "ETH") return n.toFixed(3)
   if (asset === "SOL") return n.toFixed(2)
   return String(n)
-}
-
-function truncateAddress(addr: string) {
-  if (addr.startsWith("0x")) return `${addr.slice(0, 10)}…${addr.slice(-6)}`
-  return `${addr.slice(0, 12)}…${addr.slice(-6)}`
 }
 
 function formatTs(ts: string) {

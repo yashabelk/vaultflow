@@ -28,11 +28,13 @@ function formatTs(ts: string) {
 }
 
 function simulateOnchain(wallet: Wallet): number {
-  // Deterministic variance seeded from wallet id so it's stable across renders
   const seed = wallet.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  // Only wallets where seed % 5 === 0 receive a simulated variance (~1 in 5).
+  // All others return an exact match so the majority of wallets reconcile cleanly.
+  if (seed % 5 !== 0) return wallet.balance
   const direction = seed % 2 === 0 ? 1 : -1
   const magnitude = (seed % 100) / 10000
-  const capped = Math.min(magnitude, SIMULATED_ONCHAIN_VARIANCE)
+  const capped    = Math.min(magnitude, SIMULATED_ONCHAIN_VARIANCE)
   return parseFloat((wallet.balance * (1 + direction * capped)).toFixed(8))
 }
 
